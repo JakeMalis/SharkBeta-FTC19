@@ -51,7 +51,7 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
+@TeleOp(name = "TensorFlow Autonomous", group = "Concept")
 public class TensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
@@ -61,6 +61,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
     public DcMotor rightMotor1;
     public DcMotor leftMotor2;
     public DcMotor rightMotor2;
+    public DcMotor liftPivotMotor;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -91,10 +92,11 @@ public class TensorFlowObjectDetection extends LinearOpMode {
     @Override
     public void runOpMode() {
         //Call for the variables from the Hub configuration
-        leftMotor1 = hardwareMap.get(DcMotor.class, "left_Motor1");
-        rightMotor1 = hardwareMap.get(DcMotor.class, "right_Motor1");
-        leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
-        rightMotor2 = hardwareMap.get(DcMotor.class, "right_Motor2");
+        leftMotor1 = hardwareMap.get(DcMotor.class, "leftMotor1");
+        leftMotor2 = hardwareMap.get(DcMotor.class, "leftMotor2");
+        rightMotor1 = hardwareMap.get(DcMotor.class, "rightMotor1");
+        rightMotor2 = hardwareMap.get(DcMotor.class, "rightMotor2");
+        liftPivotMotor= hardwareMap.get(DcMotor.class, "pivotMotor");
 
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
