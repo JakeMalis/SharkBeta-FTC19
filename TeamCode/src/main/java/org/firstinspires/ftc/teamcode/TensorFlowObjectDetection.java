@@ -27,19 +27,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.robotcontroller.external.samples;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-
-import java.util.List;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 /**
  * This 2018-2019 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -51,16 +50,11 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "Autonomous", group = "Concept")
+@Autonomous(name = "TensorFlow Object Detection", group = "Autonomous")
 public class TensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-
-    public DcMotor leftMotor1;
-    public DcMotor rightMotor1;
-    public DcMotor leftMotor2;
-    public DcMotor rightMotor2;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -90,12 +84,6 @@ public class TensorFlowObjectDetection extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        //Call for the variables from the Hub configuration
-        leftMotor1 = hardwareMap.get(DcMotor.class, "leftMotor1");
-        leftMotor2 = hardwareMap.get(DcMotor.class, "leftMotor2");
-        rightMotor1 = hardwareMap.get(DcMotor.class, "rightMotor1");
-        rightMotor2 = hardwareMap.get(DcMotor.class, "rightMotor2");
-
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -123,90 +111,31 @@ public class TensorFlowObjectDetection extends LinearOpMode {
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
-                      telemetry.addData("# Object Detected", updatedRecognitions.size());
-                      if (updatedRecognitions.size() == 3) {
-                        int goldMineralX = -1;
-                        int silverMineral1X = -1;
-                        int silverMineral2X = -1;
-                        for (Recognition recognition : updatedRecognitions) {
-                          if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                            goldMineralX = (int) recognition.getLeft();
-                          } else if (silverMineral1X == -1) {
-                            silverMineral1X = (int) recognition.getLeft();
-                          } else {
-                            silverMineral2X = (int) recognition.getLeft();
-                          }
+                        telemetry.addData("# Object Detected", updatedRecognitions.size());
+                        if (updatedRecognitions.size() == 3) {
+                            int goldMineralX = -1;
+                            int silverMineral1X = -1;
+                            int silverMineral2X = -1;
+                            for (Recognition recognition : updatedRecognitions) {
+                                if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                                    goldMineralX = (int) recognition.getLeft();
+                                } else if (silverMineral1X == -1) {
+                                    silverMineral1X = (int) recognition.getLeft();
+                                } else {
+                                    silverMineral2X = (int) recognition.getLeft();
+                                }
+                            }
+                            if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                                if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+                                    telemetry.addData("Gold Mineral Position", "Left");
+                                } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+                                    telemetry.addData("Gold Mineral Position", "Right");
+                                } else {
+                                    telemetry.addData("Gold Mineral Position", "Center");
+                                }
+                            }
                         }
-                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                          if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                              telemetry.addData("Gold Mineral Position", "Left");
-
-                              leftMotor1.setPower(-1);
-                              leftMotor2.setPower(-1);
-                              rightMotor1.setPower(1);
-                              rightMotor2.setPower(1);
-                              sleep(500);
-
-                              leftMotor1.setPower(1);
-                              leftMotor2.setPower(1);
-                              rightMotor1.setPower(-1);
-                              rightMotor2.setPower(-1);
-                              sleep(500);
-
-                              leftMotor1.setPower(1);
-                              leftMotor2.setPower(1);
-                              rightMotor1.setPower(1);
-                              rightMotor2.setPower(1);
-                              sleep(5000);
-
-                              leftMotor1.setPower(0);
-                              leftMotor2.setPower(0);
-                              rightMotor1.setPower(0);
-                              rightMotor2.setPower(0);
-                              break;
-                          } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                              telemetry.addData("Gold Mineral Position", "Right");
-
-                              leftMotor1.setPower(-1);
-                              leftMotor2.setPower(-1);
-                              rightMotor1.setPower(1);
-                              rightMotor2.setPower(1);
-                              sleep(500);
-
-                              leftMotor1.setPower(1);
-                              leftMotor2.setPower(1);
-                              rightMotor1.setPower(-1);
-                              rightMotor2.setPower(-1);
-                              sleep(500);
-
-                              leftMotor1.setPower(1);
-                              leftMotor2.setPower(1);
-                              rightMotor1.setPower(1);
-                              rightMotor2.setPower(1);
-                              sleep(5000);
-
-                              leftMotor1.setPower(0);
-                              leftMotor2.setPower(0);
-                              rightMotor1.setPower(0);
-                              rightMotor2.setPower(0);
-                              break;
-                          } else {
-                              telemetry.addData("Gold Mineral Position", "Center");
-
-                              leftMotor1.setPower(1);
-                              leftMotor2.setPower(1);
-                              rightMotor1.setPower(-1);
-                              rightMotor2.setPower(-1);
-                              sleep(10000);
-
-                              leftMotor1.setPower(0);
-                              leftMotor2.setPower(0);
-                              rightMotor1.setPower(0);
-                              rightMotor2.setPower(0);
-                          }
-                        }
-                      }
-                      telemetry.update();
+                        telemetry.update();
                     }
                 }
             }
@@ -240,7 +169,7 @@ public class TensorFlowObjectDetection extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
