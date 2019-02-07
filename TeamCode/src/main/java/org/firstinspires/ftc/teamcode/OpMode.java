@@ -40,6 +40,7 @@ public class OpMode extends LinearOpMode {
             double rightPower;
             leftPower  = gamepad1.left_stick_y;
             rightPower = gamepad1.right_stick_y;
+
             leftMotor1.setPower(leftPower);
             leftMotor2.setPower(leftPower);
             rightMotor1.setPower(rightPower);
@@ -61,13 +62,6 @@ public class OpMode extends LinearOpMode {
             double liftPower;
             liftPower = gamepad2.left_stick_y;
             pivotMotor.setPower(liftPower);
-
-            telemetry.addData("1st Left Motor Power: ", leftMotor1.getPower());
-            telemetry.addData("2nd Left Motor Power: ", leftMotor2.getPower());
-            telemetry.addData("1st Right Motor Power: ", rightMotor1.getPower());
-            telemetry.addData("2nd Right Motor Power: ", rightMotor2.getPower());
-            telemetry.addData("Intake Pivot Motor Position: ", pivotMotor.getCurrentPosition());
-            telemetry.update();
         }
     }
 }
